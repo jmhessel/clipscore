@@ -1,0 +1,2 @@
+# clipscore
+CLIPScore EMNLP code
