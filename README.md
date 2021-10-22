@@ -27,9 +27,9 @@ There are two ways to run CLIPScore.
 
 ## Command Line
 
-Example usage:
+Example usage included in the repo.
 ```
-python clipscore.py 
+python clipscore.py example/good_captions.json example/images/ --references_json example/refs.json
 ```
 
 
