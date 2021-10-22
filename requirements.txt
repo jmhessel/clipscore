@@ -1,0 +1,1 @@
+git+git://github.com/openai/CLIP.git@e184f60
