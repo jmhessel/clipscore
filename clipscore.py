@@ -21,6 +21,9 @@ import collections
 import os
 import pathlib
 import json
+import generation_eval_utils
+import pprint
+
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -38,6 +41,11 @@ def parse_args():
         '--references_json',
         default=None,
         help='Optional references json mapping from image_id --> [list of references]')
+
+    parser.add_argument(
+        '--compute_other_ref_metrics',
+        default=1,
+        help='If references is specified, should we compute standard reference-based metrics?')
 
     return parser.parse_args()
 
@@ -202,15 +210,17 @@ def main():
         scores = {image_id: {'CLIPScore': clipscore, 'RefCLIPScore': refclipscore}
                   for image_id, clipscore, refclipscore in
                   zip(image_ids, per_instance_image_text, refclipscores)}
+        print('CLIPScore: {:.4f}'.format(np.mean([s['CLIPScore'] for s in scores.values()])))
     else:
         scores = {image_id: {'CLIPScore': clipscore}
                   for image_id, clipscore in
                   zip(image_ids, per_instance_image_text)}
 
-    print('CLIPScore: {:.4f}'.format(np.mean([s['CLIPScore'] for s in scores.values()])))
     if args.references_json:
+        if args.compute_other_ref_metrics:
+            pprint.pprint(generation_eval_utils.get_all_metrics(references, candidates))
+        print('CLIPScore: {:.4f}'.format(np.mean([s['CLIPScore'] for s in scores.values()])))
         print('RefCLIPScore: {:.4f}'.format(np.mean([s['RefCLIPScore'] for s in scores.values()])))
-
 
 if __name__ == '__main__':
     main()
