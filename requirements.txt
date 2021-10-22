@@ -1,0 +1,2 @@
+git+git://github.com/openai/CLIP.git
+git+git://github.com/jmhessel/pycocoevalcap.git
