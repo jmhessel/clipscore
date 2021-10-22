@@ -72,7 +72,7 @@ directory, and references json is given this repo under `example/`
 The input files are formatted as follows:
 
 The candidates json should be a dictionary that maps from
-`{"string_image_identifier": "candidate"}, e.g.,
+`{"string_image_identifier": "candidate"}`, e.g.,
 
 ```
 {'image1': 'an orange cat and a grey cat are lying together.',
@@ -90,7 +90,7 @@ images/
 ```
 
 and, finally, the references json should be a dictionary that maps from
-`{"string_image_identifier": ["list", "of", "references"]}, e.g.,
+`{"string_image_identifier": ["list", "of", "references"]}`, e.g.,
 
 ```
 {"image1": ["two cats are sleeping next to each other.",
