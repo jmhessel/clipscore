@@ -18,7 +18,9 @@ import tqdm
 import numpy as np
 import sklearn.preprocessing
 import collections
-
+import os
+import pathlib
+import json
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -26,12 +28,12 @@ def parse_args():
         'candidates_json',
         type=str,
         help='Candidates json mapping from image_id --> candidate.')
-        
+
     parser.add_argument(
         'image_dir',
         type=str,
         help='Directory of images, with the filenames as image ids.')
-        
+
     parser.add_argument(
         '--references_json',
         default=None,
@@ -105,7 +107,7 @@ def extract_all_images(images, model, device, batch_size=64, num_workers=8):
             all_image_features.append(model.encode_image(b).cpu().numpy())
     all_image_features = np.vstack(all_image_features)
     return all_image_features
-    
+
 
 def get_clip_score(model, images, candidates, device, w=2.5):
     '''
@@ -164,13 +166,51 @@ def get_refonlyclipscore(model, references, candidates, device):
 
 def main():
     args = parse_args()
+
+    image_paths = [os.path.join(args.image_dir, path) for path in os.listdir(args.image_dir)
+                   if path.endswith(('.png', '.jpg', '.jpeg', '.tiff'))]
+    image_ids = [pathlib.Path(path).stem for path in image_paths]
+
+    with open(args.candidates_json) as f:
+        candidates = json.load(f)
+    candidates = [candidates[cid] for cid in image_ids]
+
+    if args.references_json:
+        with open(args.references_json) as f:
+            references = json.load(f)
+            references = [references[cid] for cid in image_ids]
+            if isinstance(references[0], str):
+                references = [[r] for r in references]
+
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model, transform = clip.load("ViT-B/32", device=device, jit=False)
     model.eval()
 
-    image_paths = [os.path.join(args.image_dir, path) for path in os.listdir(args.image_dir)
-                   if path.endswith(('.png', '.jpg', '.jpeg', '.tiff'))]
-    print(image_paths)
-    
+    image_feats = extract_all_images(
+        image_paths, model, device, batch_size=64, num_workers=8)
+
+    # get image-text clipscore
+    _, per_instance_image_text, candidate_feats = get_clip_score(
+        model, image_feats, candidates, device)
+
+    if args.references_json:
+        # get text-text clipscore
+        _, per_instance_text_text = get_refonlyclipscore(
+            model, references, candidate_feats, device)
+        # F-score
+        refclipscores = 2 * per_instance_image_text * per_instance_text_text / (per_instance_image_text + per_instance_text_text)
+        scores = {image_id: {'CLIPScore': clipscore, 'RefCLIPScore': refclipscore}
+                  for image_id, clipscore, refclipscore in
+                  zip(image_ids, per_instance_image_text, refclipscores)}
+    else:
+        scores = {image_id: {'CLIPScore': clipscore}
+                  for image_id, clipscore in
+                  zip(image_ids, per_instance_image_text)}
+
+    print('CLIPScore: {:.4f}'.format(np.mean([s['CLIPScore'] for s in scores.values()])))
+    if args.references_json:
+        print('RefCLIPScore: {:.4f}'.format(np.mean([s['RefCLIPScore'] for s in scores.values()])))
+
+
 if __name__ == '__main__':
     main()

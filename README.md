@@ -25,6 +25,41 @@ If you find the paper or this code useful, please consider citing:
 There are two ways to run CLIPScore.
 
 
+## Command Line
+
+Example usage:
+```
+python clipscore.py 
+```
+
+
+You can use the code in this repo as follows:
+
+```
+python clipscore.py [candidates json] [image directory] [optional: reference json]
+```
+
+The candidates json should be a dictionary that maps from
+`{"string_image_identifier": "candidate"}, e.g.,
+
+```
+{'image1': 'an orange cat and a grey cat are lying together.',
+ 'image2': 'a black dog looks at the camera.'
+ ...}
+```
+
+The image directory should be a directory containing the images that
+act as the keys in the candidates json, e.g.,
+
+```
+images/
+├── image1.jpg
+└── image2.jpg
+```
+
+And finally, 
+
+
 ## MSCOCO dataset in pycocoevalcap
 
 If you're running on the MSCOCO dataset and using the standard
@@ -45,19 +80,18 @@ python eval.py
 
 after a bit of time, the output should be:
 ```
-
+Bleu_1: 0.579
+Bleu_2: 0.404
+Bleu_3: 0.279
+Bleu_4: 0.191
+METEOR: 0.195
+ROUGE_L: 0.396
+CIDEr: 0.600
+SPICE: 0.133
+CLIPScore: 0.528
+RefCLIPScore: 0.605
 ```
 
 You can treat/report CLIPScore and RefCLIPScore similarly to the other
 evaluation metrics. See the paper for more details about CLIPScore and
 RefCLIPScore.
-
-## Command Line
-
-If you're running on a dataset that's not MSCOCO, you aren't using the
-standard MSCOCO evaluation format, or just want a simple command line
-utility, you can use the code in this repo as follows:
-
-```
-python clipscore.py 
-```
