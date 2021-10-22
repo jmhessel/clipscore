@@ -22,22 +22,54 @@ If you find the paper or this code useful, please consider citing:
 
 # How do I run the code?
 
-There are two ways to run CLIPScore.
-
-
 ## Command Line
 
-Example usage included in the repo.
+Example usage
 ```
-python clipscore.py example/good_captions.json example/images/ --references_json example/refs.json
+> python clipscore.py example/good_captions.json example/images/
+...
+CLIPScore: 0.8584
 ```
 
-
-You can use the code in this repo as follows:
+If you include optionally some references, you will see RefCLIPScore, alongside a usual set of
+caption generation evaluation metrics. The references are optional.
 
 ```
-python clipscore.py [candidates json] [image directory] [optional: reference json]
+> python clipscore.py example/good_captions.json example/images/ --references_json example/refs.json
+...
+BLEU-1: 0.6667
+BLEU-2: 0.4899
+BLEU-3: 0.3469
+BLEU-4: 0.0000
+METEOR: 0.3444
+ROUGE: 0.4280
+CIDER: 0.4000
+CLIPScore: 0.8584
+RefCLIPScore: 0.8452
 ```
+
+Worse captions should get lower scores:
+```
+> python clipscore.py example/bad_captions.json example/images/ --references_json example/refs.json
+...
+BLEU-1: 0.4815
+BLEU-2: 0.2404
+BLEU-3: 0.1359
+BLEU-4: 0.0000
+METEOR: 0.1861
+ROUGE: 0.3121
+CIDER: 0.1500
+CLIPScore: 0.7153
+RefCLIPScore: 0.7253
+```
+
+You can treat/report CLIPScore and RefCLIPScore similarly to the other
+evaluation metrics. See the paper for more details about CLIPScore and
+RefCLIPScore. Full usage options can be given by `python clipscore.py
+-h`.  An example set of inputs, including a candidate json, image
+directory, and references json is given this repo under `example/`
+
+The input files are formatted as follows:
 
 The candidates json should be a dictionary that maps from
 `{"string_image_identifier": "candidate"}, e.g.,
@@ -57,22 +89,36 @@ images/
 └── image2.jpg
 ```
 
-And finally, 
+and, finally, the references json should be a dictionary that maps from
+`{"string_image_identifier": ["list", "of", "references"]}, e.g.,
 
+```
+{"image1": ["two cats are sleeping next to each other.",
+            "a grey cat is cuddling with an orange cat on a blanket.",
+	    "the orange cat is happy that the black cat is close to it."],
+ "image2": ["a dog is wearing ear muffs as it lies on a carpet.",
+            "a black dog and an orange cat are looking at the photographer.",
+	    "headphones are placed on a dogs ears."]}
+```
 
 ## MSCOCO dataset in pycocoevalcap
 
 If you're running on the MSCOCO dataset and using the standard
 evaluation toolkit, you can use our version of
-[pycocoevalcap](https://github.com/jmhessel/pycocoevalcap). To do
-that, you can simply:
+[pycocoevalcap](https://github.com/jmhessel/pycocoevalcap) to evaluate.
+You won't even need to download the original MSCOCO images, thanks to
+a bit of magic :-)
+
+To use `pycocoevalcap` on the MSCOCO dataset in the MSCOCO format, you
+can simply use:
 
 ```
 pip install git+https://github.com/jmhessel/pycocoevalcap.git
 ```
 
 there is an example evaluation in that repo under
-`examples/eval.py`. After pip installing, if you clone the repo and run
+`examples/eval.py`. After pip installing, if you clone the
+`pycocoeval` repo and run
 
 ```
 python eval.py
@@ -91,7 +137,3 @@ SPICE: 0.133
 CLIPScore: 0.528
 RefCLIPScore: 0.605
 ```
-
-You can treat/report CLIPScore and RefCLIPScore similarly to the other
-evaluation metrics. See the paper for more details about CLIPScore and
-RefCLIPScore.
