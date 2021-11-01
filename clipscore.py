@@ -23,6 +23,7 @@ import pathlib
 import json
 import generation_eval_utils
 import pprint
+import warnings
 
 
 def parse_args():
@@ -122,6 +123,8 @@ def extract_all_images(images, model, device, batch_size=64, num_workers=8):
     with torch.no_grad():
         for b in tqdm.tqdm(data):
             b = b['image'].to(device)
+            if device == 'cuda':
+                b = b.to(torch.float16)
             all_image_features.append(model.encode_image(b).cpu().numpy())
     all_image_features = np.vstack(all_image_features)
     return all_image_features
@@ -201,6 +204,10 @@ def main():
                 references = [[r] for r in references]
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
+    if device == 'cpu':
+        warnings.warn(
+            'CLIP runs in full float32 on CPU. Results in paper were computed on GPU, which uses float16. '
+            'If you\'re reporting results on CPU, please note this.')
     model, transform = clip.load("ViT-B/32", device=device, jit=False)
     model.eval()
 
