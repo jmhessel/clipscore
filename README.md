@@ -137,3 +137,28 @@ SPICE: 0.133
 CLIPScore: 0.528
 RefCLIPScore: 0.605
 ```
+
+## Reproducability notes:
+
+- CLIPScore can run either on CPU or GPU. But, there are slight
+  differences due to floating point precision. As discussed
+  [here](https://github.com/openai/CLIP/issues/30#issuecomment-771099118),
+  on CPU, all operations run in `float32`, but on GPU, some operations
+  run in `float16`. The differences are generally small (e.g., for the
+  example run above, with `example/good_captions.json` captions and
+  `example/images/` images, on CPU, the output is `CLIPScore: 0.8585`,
+  but on GPU, the output is `CLIPScore: 0.8584`.) *All experiments in the
+  paper were run on GPU, and this code will raise a warning if you're not
+  using a GPU.`
+
+- Because CLIPScore depends on the images to compute, resizing,
+  compressing, etc. can all cause slight differences in computing the
+  CLIPScore. Even saving a jpg twice can result in different
+  compression, because that format is lossy! To this end, we release
+  the checksums of the images we used for the paper. see `checksums/`
+  for more info.
+
+- The prompt we used for the text side of CLIP, as mentioned in the
+  paper is ``A photo depicts" This is hard-coded into this repo. Other
+  prompts will result in slightly different results, and we don't
+  recommend them for the sake of reproducability.
