@@ -207,7 +207,7 @@ def main():
     if device == 'cpu':
         warnings.warn(
             'CLIP runs in full float32 on CPU. Results in paper were computed on GPU, which uses float16. '
-            'If you\'re reporting results on CPU, please note this.')
+            'If you\'re reporting results on CPU, please note this when you report.')
     model, transform = clip.load("ViT-B/32", device=device, jit=False)
     model.eval()
 
