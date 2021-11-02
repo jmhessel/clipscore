@@ -149,7 +149,7 @@ RefCLIPScore: 0.605
   `example/images/` images, on CPU, the output is `CLIPScore: 0.8585`,
   but on GPU, the output is `CLIPScore: 0.8584`.) *All experiments in the
   paper were run on GPU, and this code will raise a warning if you're not
-  using a GPU.`
+  using a GPU.*
 
 - Because CLIPScore depends on the images to compute, resizing,
   compressing, etc. can all cause slight differences in computing the
