@@ -138,7 +138,7 @@ CLIPScore: 0.528
 RefCLIPScore: 0.605
 ```
 
-## Reproducability notes:
+## Reproducibility notes:
 
 - CLIPScore can run either on CPU or GPU. But, there are slight
   differences due to floating point precision. As discussed
