@@ -156,6 +156,9 @@ RefCLIPScore: 0.605
   CLIPScore. Even saving a jpg twice can result in different
   compression, because that format is lossy! To this end, we release
   the checksums of the images we used for the paper. see `checksums/`
+  for more info. For the pycocoevalcap repo, we have also included the
+  checksums for MSCOCO --- see
+  [here](https://github.com/jmhessel/pycocoevalcap/tree/master/clipscore)
   for more info.
 
 - The prompt we used for the text side of CLIP, as mentioned in the
