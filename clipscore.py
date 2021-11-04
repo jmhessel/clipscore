@@ -46,6 +46,7 @@ def parse_args():
     parser.add_argument(
         '--compute_other_ref_metrics',
         default=1,
+        type=int,
         help='If references is specified, should we compute standard reference-based metrics?')
 
     parser.add_argument(
