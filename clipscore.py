@@ -24,6 +24,7 @@ import json
 import generation_eval_utils
 import pprint
 import warnings
+from packaging import version
 
 
 def parse_args():
@@ -144,9 +145,17 @@ def get_clip_score(model, images, candidates, device, w=2.5):
 
     candidates = extract_all_captions(candidates, model, device)
 
-    images = sklearn.preprocessing.normalize(images, axis=1)
-    candidates = sklearn.preprocessing.normalize(candidates, axis=1)
-
+    #as of numpy 1.21, normalize doesn't work properly for float16
+    if version.parse(np.__version__) < version.parse('1.21'):
+        images = sklearn.preprocessing.normalize(images, axis=1)
+        candidates = sklearn.preprocessing.normalize(candidates, axis=1)
+    else:
+        warnings.warn(
+            'due to a numerical instability, new numpy normalization is slightly different than paper results. '
+            'to exactly replicate paper results, please use numpy version less than 1.21, e.g., 1.20.3.')
+        images = images / np.sqrt(np.sum(images**2, axis=1, keepdims=True))
+        candidates = candidates / np.sqrt(np.sum(candidates**2, axis=1, keepdims=True))
+    
     per = w*np.clip(np.sum(images * candidates, axis=1), 0, None)
     return np.mean(per), per, candidates
 
@@ -166,9 +175,18 @@ def get_refonlyclipscore(model, references, candidates, device):
 
     flattened_refs = extract_all_captions(flattened_refs, model, device)
 
-    candidates = sklearn.preprocessing.normalize(candidates, axis=1)
-    flattened_refs = sklearn.preprocessing.normalize(flattened_refs, axis=1)
 
+    if version.parse(np.__version__) < version.parse('1.21'):
+        candidates = sklearn.preprocessing.normalize(candidates, axis=1)
+        flattened_refs = sklearn.preprocessing.normalize(flattened_refs, axis=1)
+    else:
+        warnings.warn(
+            'due to a numerical instability, new numpy normalization is slightly different than paper results. '
+            'to exactly replicate paper results, please use numpy version less than 1.21, e.g., 1.20.3.')
+    
+        candidates = candidates / np.sqrt(np.sum(candidates**2, axis=1, keepdims=True))
+        flattened_refs = flattened_refs / np.sqrt(np.sum(flattened_refs**2, axis=1, keepdims=True))
+    
     cand_idx2refs = collections.defaultdict(list)
     for ref_feats, cand_idx in zip(flattened_refs, flattened_refs_idxs):
         cand_idx2refs[cand_idx].append(ref_feats)
