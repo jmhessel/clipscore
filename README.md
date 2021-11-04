@@ -165,3 +165,9 @@ RefCLIPScore: 0.605
   paper is ``A photo depicts" This is hard-coded into this repo. Other
   prompts will result in slightly different results, and we don't
   recommend them for the sake of reproducability.
+  
+  ## Acknowledgement
+  
+  The authors would like to thank Jungo Kasai for being the first to use
+  this repo. Thanks to Jungo, we fixed a few issues, and added some
+  information about reproducibility that was missing before.
