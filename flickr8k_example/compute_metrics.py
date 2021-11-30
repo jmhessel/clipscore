@@ -3,7 +3,6 @@ Computes the metrics for Flickr8K.
 '''
 import sys
 sys.path.append('../')
-import argparse
 import clipscore
 import generation_eval_utils
 import scipy.stats
@@ -13,11 +12,6 @@ import numpy as np
 import torch
 import warnings
 import clip
-
-def parse_args():
-    parser = argparse.ArgumentParser()
-
-    return parser.parse_args()
 
 
 def compute_human_correlation(input_json, image_directory, tauvariant='c'):
