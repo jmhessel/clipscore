@@ -14,7 +14,7 @@ from pycocoevalcap.rouge.rouge import Rouge
 from pycocoevalcap.spice.spice import Spice
 
 
-def get_all_metrics(refs, cands):
+def get_all_metrics(refs, cands, return_per_cap=False):
     metrics = []
     names = []
 
@@ -22,11 +22,14 @@ def get_all_metrics(refs, cands):
                                (Meteor(), 'meteor'),
                                (Rouge(), 'rouge'),
                                (Cider(), 'cider'),
-                               (Spice(), 'cider')]
+                               (Spice(), 'spice')]
 
     for scorer, name in pycoco_eval_cap_scorers:
         overall, per_cap = pycoco_eval(scorer, refs, cands)
-        metrics.append(overall)
+        if return_per_cap:
+            metrics.append(per_cap)
+        else:
+            metrics.append(overall)
         names.append(name)
 
     metrics = dict(zip(names, metrics))
