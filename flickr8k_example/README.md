@@ -16,5 +16,4 @@ https://arxiv.org/abs/2104.08718
 There are three steps:
 
 1. run `download.py` which downloads and preprocesses the Flickr8K corpus.
-2. run `compute_metrics.py` which will compute the appropriate evaluation metrics.
-3. run `correlate_with_human.py` which will report the correlation between evaluation metrics and human judgments.
+2. run `compute_metrics.py` which will compute the appropriate evaluation metrics and report correlations with human judgment
