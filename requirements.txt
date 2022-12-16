@@ -1,2 +1,2 @@
-git+git://github.com/openai/CLIP.git
-git+git://github.com/jmhessel/pycocoevalcap.git
+git+https://github.com/openai/CLIP.git
+git+https://github.com/jmhessel/pycocoevalcap.git
